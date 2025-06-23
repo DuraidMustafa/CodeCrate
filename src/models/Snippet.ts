@@ -29,4 +29,5 @@ const SnippetSchema = new Schema(
   },
   { timestamps: true },
 );
-export const Snippet = model.Snippet || model("Snippet", SnippetSchema);
+export const Snippet =
+  mongoose.models.Snippet || model("Snippet", SnippetSchema);
