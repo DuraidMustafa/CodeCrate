@@ -1,10 +1,34 @@
-export default function Home() {
+import { Header } from "@/components/header";
+import { HeroSection } from "@/components/hero-section";
+import { ProblemSection } from "@/components/problem-section";
+import { SolutionSection } from "@/components/solution-section";
+import { FeaturesSection } from "@/components/features-section";
+import { HowItWorksSection } from "@/components/how-it-works-section";
+import { DemoSection } from "@/components/demo-section";
+import { WhyCodeCrateSection } from "@/components/why-codecrate-section";
+import { CTASection } from "@/components/cta-section";
+import { Footer } from "@/components/footer";
+
+export default function HomePage() {
   return (
-    <main className='flex min-h-screen flex-col items-center justify-between p-24'>
-      <h1 className='text-4xl font-bold'>Welcome to CodeCrate!</h1>
-      <p className='mt-4 text-lg'>
-        Your one-stop solution for code management and collaboration.
-      </p>
-    </main>
+    <div className='min-h-screen bg-black text-white overflow-x-hidden'>
+      {/* Animated background */}
+      <div className='fixed inset-0 bg-gradient-to-br from-purple-900/20 via-blue-900/20 to-teal-900/20' />
+      <div className='fixed inset-0 bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-purple-900/30 via-transparent to-transparent' />
+
+      <div className='relative z-10'>
+        <Header />
+        <main>
+          <HeroSection />
+          <ProblemSection />
+          <SolutionSection />
+          <FeaturesSection />
+          <HowItWorksSection />
+          <WhyCodeCrateSection />
+          <CTASection />
+        </main>
+        <Footer />
+      </div>
+    </div>
   );
 }
