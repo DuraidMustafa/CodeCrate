@@ -20,7 +20,7 @@ import { Badge } from "@/components/ui/badge";
 import { Code, Save, Tag, X, Wand2 } from "lucide-react";
 import { useState, useEffect } from "react";
 import { CodeEditor } from "@/components/code-editor";
-import { detectLanguage } from "@/lib/utils";
+import { detectLanguage } from "@/lib/language-detector";
 
 interface AddSnippetModalProps {
   isOpen: boolean;
@@ -41,10 +41,29 @@ const availableTags = [
 ];
 
 const languages = [
+  // Web Technologies
   "JavaScript",
   "TypeScript",
   "JSX",
   "TSX",
+  "HTML",
+  "CSS",
+  "SCSS",
+  "Sass",
+  "Less",
+  "Stylus",
+  "JSON",
+  "XML",
+  "YAML",
+  "TOML",
+  "INI",
+
+  // Frontend Frameworks
+  "Vue",
+  "Svelte",
+  "Angular",
+
+  // Backend Languages
   "Python",
   "Java",
   "C#",
@@ -54,20 +73,89 @@ const languages = [
   "Rust",
   "PHP",
   "Ruby",
+  "Perl",
+  "Lua",
+
+  // Mobile Development
   "Swift",
   "Kotlin",
   "Dart",
-  "CSS",
-  "SCSS",
-  "HTML",
-  "XML",
-  "JSON",
-  "YAML",
-  "SQL",
+  "Objective-C",
+
+  // Functional Languages
+  "Haskell",
+  "Erlang",
+  "Elixir",
+  "Clojure",
+  "F#",
+  "Scala",
+  "OCaml",
+
+  // Systems Programming
+  "Assembly",
+
+  // JVM Languages
+  "Groovy",
+
+  // .NET Languages
+  "VB.NET",
+
+  // Scripting Languages
   "Bash",
+  "Zsh",
+  "Fish",
   "PowerShell",
+  "Batch",
+
+  // Database
+  "SQL",
+  "MySQL",
+  "PostgreSQL",
+  "SQLite",
+  "PL/SQL",
+  "T-SQL",
+
+  // Configuration & DevOps
   "Dockerfile",
+  "Makefile",
+  "CMake",
+  "Nginx",
+  "Apache",
+
+  // Documentation
   "Markdown",
+  "reStructuredText",
+  "LaTeX",
+
+  // Data & Config
+  "CSV",
+  "TSV",
+
+  // Game Development
+  "GDScript",
+
+  // Scientific Computing
+  "R",
+  "MATLAB",
+  "Octave",
+  "Julia",
+
+  // Blockchain
+  "Solidity",
+
+  // Query Languages
+  "GraphQL",
+
+  // Template Languages
+  "Handlebars",
+  "Mustache",
+  "Jinja2",
+  "Twig",
+
+  // Other
+  "RegEx",
+  "Diff",
+  "Log",
 ];
 
 export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
@@ -82,7 +170,11 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
   useEffect(() => {
     if (code.trim() && !language) {
       const detected = detectLanguage(code);
-      setDetectedLanguage(detected);
+      if (detected) {
+        setDetectedLanguage(detected);
+      } else {
+        setDetectedLanguage("");
+      }
     } else if (!code.trim()) {
       setDetectedLanguage("");
     }
@@ -287,7 +379,7 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
             <Button
               variant='outline'
               onClick={handleClose}
-              className='border-white/20 text-gray-300 hover:bg-white/10'>
+              className='border-white/20 text-gray-300 hover:bg-white/10 bg-transparent'>
               Cancel
             </Button>
             <Button
