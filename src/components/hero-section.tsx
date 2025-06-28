@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { ArrowRight, Sparkles, Search, Tag, Folder } from "lucide-react";
 import { useState } from "react";
+import Link from "next/link";
 
 export function HeroSection() {
   const [isHovered, setIsHovered] = useState(false);
@@ -41,18 +42,20 @@ export function HeroSection() {
           </p>
 
           <div className='flex flex-col sm:flex-row gap-6 justify-center items-center mb-16'>
-            <Button
-              size='lg'
-              className='bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white px-10 py-4 text-lg shadow-2xl shadow-purple-500/25 border-0 group'
-              onMouseEnter={() => setIsHovered(true)}
-              onMouseLeave={() => setIsHovered(false)}>
-              Start Your Journey
-              <ArrowRight
-                className={`ml-3 h-5 w-5 transition-transform ${
-                  isHovered ? "translate-x-1" : ""
-                }`}
-              />
-            </Button>
+            <Link href={"/dashboard"}>
+              <Button
+                size='lg'
+                className='bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white px-10 py-4 text-lg shadow-2xl shadow-purple-500/25 border-0 group'
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}>
+                Start Your Journey
+                <ArrowRight
+                  className={`ml-3 h-5 w-5 transition-transform ${
+                    isHovered ? "translate-x-1" : ""
+                  }`}
+                />
+              </Button>
+            </Link>
           </div>
 
           {/* Feature preview cards */}

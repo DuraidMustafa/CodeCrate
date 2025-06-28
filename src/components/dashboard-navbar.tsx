@@ -1,10 +1,12 @@
-import { Button } from "@/components/ui/button";
-import { Code2 } from "lucide-react";
 import Link from "next/link";
+import React from "react";
+import { Button } from "./ui/button";
+import { Code2, Plus } from "lucide-react";
+import { UserButton } from "@clerk/nextjs";
 
-export function Header() {
+const DashboardNavbar = () => {
   return (
-    <header className='fixed top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur-xl'>
+    <header className='top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur-xl'>
       <div className='container mx-auto flex h-20 items-center justify-between px-6'>
         <Link
           href='/'
@@ -19,16 +21,19 @@ export function Header() {
             CodeCrate
           </span>
         </Link>
-
-        <div className='flex items-center space-x-4'>
-          {" "}
-          <Link href={"/dashboard"}>
+        <div className='flex space-x-4'>
+          <div className='flex items-center space-x-4'>
             <Button className='bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 shadow-lg shadow-purple-500/25'>
-              Get Started
+              <Plus className='h-6 w-6 text-white' /> Add New Snippet
             </Button>
-          </Link>
+          </div>
+          <div className='flex items-center'>
+            <UserButton />
+          </div>
         </div>
       </div>
     </header>
   );
-}
+};
+
+export default DashboardNavbar;
