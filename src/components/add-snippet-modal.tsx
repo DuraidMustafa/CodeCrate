@@ -1,5 +1,5 @@
 "use client";
-
+import { toast } from "react-toastify";
 import {
   Dialog,
   DialogContent,
@@ -26,19 +26,6 @@ interface AddSnippetModalProps {
   isOpen: boolean;
   onClose: () => void;
 }
-
-const availableTags = [
-  "react",
-  "javascript",
-  "typescript",
-  "css",
-  "html",
-  "node",
-  "python",
-  "utils",
-  "hooks",
-  "components",
-];
 
 const languages = [
   // Web Technologies
@@ -165,7 +152,43 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
   const [detectedLanguage, setDetectedLanguage] = useState("");
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await fetch("/api/tags/getTags");
+        const data = await response.json();
+        if (data.success) {
+          const tags = data.tags.map((tag: { name: string }) => tag.name);
+          setAvailableTags(tags);
+          console.log("Available tags fetched successfully:", tags);
+        } else {
+          console.log("Failed to fetch tags:", data.message);
+        }
+      } catch (error) {
+        console.log("Error fetching tags:", error);
+      }
+    };
 
+    fetchTags();
+  }, []);
+  function getNewTags(availableTags: string[], selectedTags: string[]) {
+    const newTags = [];
+    const defaultTags = [];
+
+    for (const item of selectedTags) {
+      if (availableTags.includes(item)) {
+        defaultTags.push(item);
+      } else {
+        newTags.push(item);
+      }
+    }
+
+    return {
+      newTags,
+      defaultTags,
+    };
+  }
   // Auto-detect language when code changes
   useEffect(() => {
     if (code.trim() && !language) {
@@ -180,9 +203,71 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
     }
   }, [code, language]);
 
-  const addTag = (tag: string) => {
+  const addTag = async (tag: string) => {
     if (tag && !selectedTags.includes(tag)) {
-      setSelectedTags([...selectedTags, tag]);
+      try {
+        setSelectedTags([...selectedTags, tag]);
+        setNewTag("");
+        const tags = getNewTags(availableTags, [...selectedTags, tag]);
+        const isNewTag = tags.newTags.includes(tag);
+        console.log(tags, isNewTag, tag);
+
+        if (!isNewTag) {
+          console.log("Tag already exists:", tag);
+
+          return;
+        }
+        const response = await fetch("/api/tags/saveTags", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            tag,
+          }),
+        });
+        const data = await response.json();
+        if (data.success) {
+          console.log("Tag saved successfully:", data);
+          toast.success(data.message, {
+            position: "bottom-left",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+        }
+        if (!data.success) {
+          console.log("Failed to save tag:", data.message);
+          toast.error(data.message, {
+            position: "bottom-left",
+            autoClose: 3000,
+            hideProgressBar: true,
+            closeOnClick: false,
+            pauseOnHover: true,
+            draggable: true,
+            progress: undefined,
+            theme: "dark",
+          });
+          return;
+        }
+      } catch (error) {
+        console.log(error);
+
+        toast.error("An Error Occurred", {
+          position: "bottom-left",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+      }
     }
     setNewTag("");
   };
@@ -198,11 +283,70 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
     }
   };
 
-  const handleSave = () => {
-    const finalLanguage = language || detectedLanguage;
-    console.log({ title, code, language: finalLanguage, tags: selectedTags });
+  const handleSave = async () => {
+    const finalLanguage = language || "";
+    console.log({
+      title,
+      code,
+      language: finalLanguage,
+      tags: selectedTags,
+    });
 
-    // Reset form
+    const Tags = getNewTags(availableTags, selectedTags);
+    try {
+      const response = await fetch(`/api/snippets/saveSnippet`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          title,
+          code,
+          language: finalLanguage,
+          defaultTags: Tags.defaultTags,
+        }),
+      });
+      const data = await response.json();
+      if (!data.success) {
+        console.log("Failed to save snippet:", data.message);
+        toast.error(data.message, {
+          position: "bottom-left",
+          autoClose: 3000,
+          hideProgressBar: true,
+          closeOnClick: false,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "dark",
+        });
+        return;
+      }
+      console.log("Snippet saved successfully:", data);
+      toast.success(data.message, {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    } catch (error) {
+      console.log(error);
+
+      toast.error("Server Error Occurred", {
+        position: "bottom-left",
+        autoClose: 3000,
+        hideProgressBar: true,
+        closeOnClick: false,
+        pauseOnHover: true,
+        draggable: true,
+        progress: undefined,
+        theme: "dark",
+      });
+    }
+
     setTitle("");
     setCode("");
     setLanguage("");

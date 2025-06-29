@@ -1,10 +1,13 @@
+"use client";
 import Link from "next/link";
-import React from "react";
+import React, { useState } from "react";
 import { Button } from "./ui/button";
 import { Code2, Plus } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
+import { AddSnippetModal } from "./add-snippet-modal";
 
 const DashboardNavbar = () => {
+  const [isModalOpen, setIsModalOpen] = useState(false);
   return (
     <header className='top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur-xl'>
       <div className='container mx-auto flex h-20 items-center justify-between px-6'>
@@ -23,7 +26,13 @@ const DashboardNavbar = () => {
         </Link>
         <div className='flex space-x-4'>
           <div className='flex items-center space-x-4'>
-            <Button className='bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 shadow-lg shadow-purple-500/25'>
+            <AddSnippetModal
+              isOpen={isModalOpen}
+              onClose={() => setIsModalOpen(false)}
+            />
+            <Button
+              className='bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 shadow-lg shadow-purple-500/25'
+              onClick={() => setIsModalOpen(true)}>
               <Plus className='h-6 w-6 text-white' /> Add New Snippet
             </Button>
           </div>

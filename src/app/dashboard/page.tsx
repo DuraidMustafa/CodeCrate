@@ -3,7 +3,7 @@ import { AddSnippetModal } from "@/components/add-snippet-modal";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
 import React, { useState } from "react";
-
+import { ToastContainer } from "react-toastify";
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -15,7 +15,19 @@ const Dashboard = () => {
           className='border w-128 p-2 rounded-lg shadow-md outline-none ring-2 ring-purple-500'
           placeholder='Search snippets...'
         />
-      </div> */}
+      </div> */}{" "}
+      <ToastContainer
+        position='bottom-left'
+        autoClose={3000}
+        hideProgressBar
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme='dark'
+      />
       <AddSnippetModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

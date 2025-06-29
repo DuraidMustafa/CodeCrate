@@ -6,23 +6,19 @@ const SnippetSchema = new Schema(
       type: String,
       required: false,
     },
-    description: {
-      type: String,
-      required: false,
-    },
     code: {
       type: String,
       required: true,
     },
     language: {
       type: String,
-      required: true,
+      required: false,
     },
     tags: {
       type: [String],
       required: false,
     },
-    ownerId: {
+    userId: {
       type: String,
       required: true,
     },
