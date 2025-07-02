@@ -12,6 +12,7 @@ import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import AdvancedLoading from "@/components/advanced-loading";
 import InfiniteScroll from "react-infinite-scroll-component";
 import InfiniteScrollLoading from "@/components/infinite-scroll-loading";
+import { EditSnippetModel } from "@/components/edit-snippet-model";
 
 interface Snippet {
   _id: string;
@@ -29,6 +30,7 @@ const LIMIT = 6;
 
 const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [snippets, setSnippets] = useState<Snippet[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
@@ -44,6 +46,8 @@ const Dashboard = () => {
       `/api/snippets/getAllSnippets?limit=${LIMIT}&skip=${page * LIMIT}`,
     );
     const data = await response.json();
+    console.log(data);
+
     if (data.success) {
       setSnippets((prev) => [...prev, ...data.snippets]);
       setHasMore(data.snippets.length === LIMIT);
@@ -176,10 +180,16 @@ const Dashboard = () => {
                           className='h-8 w-8 p-0'>
                           <Copy className='h-4 w-4' />
                         </Button>
+                        <EditSnippetModel
+                          isOpen={isEditModalOpen}
+                          onClose={() => setIsEditModalOpen(false)}
+                          snippetId={snippet._id}
+                        />
                         <Button
                           size='sm'
                           variant='ghost'
-                          className='h-8 w-8 p-0'>
+                          className='h-8 w-8 p-0'
+                          onClick={() => setIsEditModalOpen(true)}>
                           <Edit className='h-4 w-4' />
                         </Button>
                         <Button

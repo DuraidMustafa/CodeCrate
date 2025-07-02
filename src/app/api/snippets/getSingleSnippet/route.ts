@@ -1,21 +1,22 @@
 import { NextRequest } from "next/server";
 import dbConnect from "../../../../lib/dbConnect";
-import { Tag } from "@/models/Tag";
+import { Snippet } from "@/models/Snippet";
 import { getAuth } from "@clerk/nextjs/server";
 
 export async function GET(request: NextRequest) {
   try {
     const { userId } = getAuth(request);
-    dbConnect();
-    const tags = await Tag.find({
-      $or: [{ userId: userId }, { default: true }],
-    });
+    const { searchParams } = new URL(request.url);
+    const snippetId = searchParams.get("snippetId") || "";
 
+    dbConnect();
+
+    const snippet = await Snippet.find({ _id: snippetId, userId });
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Tags fetched successfully",
-        tags,
+        message: "Snippet fetched successfully",
+        snippet,
       }),
       {
         status: 200,

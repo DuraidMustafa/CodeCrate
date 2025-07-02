@@ -22,9 +22,10 @@ import { useState, useEffect } from "react";
 import { CodeEditor } from "@/components/code-editor";
 import { detectLanguage } from "@/lib/language-detector";
 
-interface AddSnippetModalProps {
+interface EditSnippetModalProps {
   isOpen: boolean;
   onClose: () => void;
+  snippetId: string;
 }
 
 const languages = [
@@ -145,7 +146,11 @@ const languages = [
   "Log",
 ];
 
-export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
+export function EditSnippetModel({
+  isOpen,
+  onClose,
+  snippetId,
+}: EditSnippetModalProps) {
   const [title, setTitle] = useState("");
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("");
@@ -171,6 +176,21 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
     };
 
     fetchTags();
+  }, []);
+  useEffect(() => {
+    const fetchSnippets = async () => {
+      const response = await fetch(
+        `/api/snippets/getSingleSnippet?snippetId=${snippetId}`,
+      );
+      const data = await response.json();
+      console.log(data);
+      const snippetObject = data.snippet[0];
+      setTitle(snippetObject.title || "");
+      setCode(snippetObject.code || "");
+      setLanguage(snippetObject.language || "");
+      setSelectedTags([...snippetObject.tags]);
+    };
+    fetchSnippets();
   }, []);
   function getNewTags(availableTags: string[], selectedTags: string[]) {
     const newTags = [];
@@ -282,7 +302,7 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
     }
   };
 
-  const handleSave = async () => {
+  const handleUpdate = async () => {
     const finalLanguage = language || "";
     console.log({
       title,
@@ -292,8 +312,8 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
     });
 
     try {
-      const response = await fetch(`/api/snippets/saveSnippet`, {
-        method: "POST",
+      const response = await fetch(`/api/snippets/updateSnippet`, {
+        method: "PATCH",
         headers: {
           "Content-Type": "application/json",
         },
@@ -302,11 +322,12 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
           code,
           language: finalLanguage,
           defaultTags: selectedTags,
+          id: snippetId,
         }),
       });
       const data = await response.json();
       if (!data.success) {
-        console.log("Failed to save snippet:", data.message);
+        console.log("Failed to update snippet:", data.message);
         toast.error(data.message, {
           position: "bottom-left",
           autoClose: 3000,
@@ -319,7 +340,7 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
         });
         return;
       }
-      console.log("Snippet saved successfully:", data);
+      console.log("Snippet updated successfully:", data);
       toast.success(data.message, {
         position: "bottom-left",
         autoClose: 3000,
@@ -373,7 +394,7 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
         <DialogHeader>
           <DialogTitle className='flex items-center gap-2 text-xl'>
             <Code className='h-5 w-5 text-purple-400' />
-            Add New Snippet
+            Edit Snippet
           </DialogTitle>
         </DialogHeader>
 
@@ -525,11 +546,11 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
               Cancel
             </Button>
             <Button
-              onClick={handleSave}
+              onClick={handleUpdate}
               disabled={!code.trim()}
               className='bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0'>
               <Save className='mr-2 h-4 w-4' />
-              Save Snippet
+              Edit Snippet
             </Button>
           </div>
         </div>
