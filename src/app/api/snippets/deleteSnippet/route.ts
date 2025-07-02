@@ -2,23 +2,11 @@ import { getAuth } from "@clerk/nextjs/server";
 import { NextRequest } from "next/server";
 import dbConnect from "../../../../lib/dbConnect";
 import { Snippet } from "../../../../models/Snippet";
-export async function PATCH(request: NextRequest) {
+export async function DELETE(request: NextRequest) {
   try {
     const { userId } = getAuth(request);
     const body = await request.json();
-    const { title, code, language, defaultTags, id } = body;
-    if (!code) {
-      return new Response(
-        JSON.stringify({
-          message: "Please provide your snippet",
-          success: false,
-        }),
-        {
-          status: 400,
-          headers: { "Content-Type": "application/json" },
-        },
-      );
-    }
+    const { id } = body;
     if (!id) {
       return new Response(
         JSON.stringify({
@@ -34,21 +22,14 @@ export async function PATCH(request: NextRequest) {
 
     dbConnect();
 
-    const newSnippet = await Snippet.findOneAndUpdate(
-      { _id: id },
-      {
-        title: title,
-        code: code,
-        language: language,
-        tags: defaultTags,
-        userId: userId,
-      },
-    );
+    await Snippet.findOneAndDelete({
+      _id: id,
+      userId,
+    });
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Snippet updated successfully",
-        newSnippet,
+        message: "Snippet deleted successfully",
       }),
       {
         status: 200,

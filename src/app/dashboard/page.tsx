@@ -99,7 +99,27 @@ const Dashboard = () => {
     };
     return langMap[language] || language.toLowerCase();
   };
-
+  const handleDeleteSnippet = async (snippetId: string) => {
+    try {
+      const response = await fetch("/api/snippets/deleteSnippet", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ id: snippetId }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        toast.success("Snippet deleted successfully");
+      }
+      if (!data.success) {
+        toast.error(data.message || "Failed to delete snippet");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Server error occurred while deleting snippet");
+    }
+  };
   if (isLoading) return <AdvancedLoading />;
 
   return (
@@ -195,6 +215,7 @@ const Dashboard = () => {
                         <Button
                           size='sm'
                           variant='ghost'
+                          onClick={() => handleDeleteSnippet(snippet._id)}
                           className='h-8 w-8 p-0 text-red-500 hover:text-red-700'>
                           <Trash2 className='h-4 w-4' />
                         </Button>
