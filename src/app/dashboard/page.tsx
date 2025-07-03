@@ -33,6 +33,7 @@ const Dashboard = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [snippets, setSnippets] = useState<Snippet[]>([]);
+  const [snippetId, setSnippetId] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
@@ -150,6 +151,11 @@ const Dashboard = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
       />
+      <EditSnippetModel
+        isOpen={isEditModalOpen}
+        onClose={() => setIsEditModalOpen(false)}
+        snippetId={snippetId}
+      />
 
       {snippets.length > 0 ? (
         <>
@@ -209,16 +215,14 @@ const Dashboard = () => {
                           className='h-8 w-8 p-0'>
                           <Copy className='h-4 w-4' />
                         </Button>
-                        <EditSnippetModel
-                          isOpen={isEditModalOpen}
-                          onClose={() => setIsEditModalOpen(false)}
-                          snippetId={snippet._id}
-                        />
                         <Button
                           size='sm'
                           variant='ghost'
                           className='h-8 w-8 p-0'
-                          onClick={() => setIsEditModalOpen(true)}>
+                          onClick={() => {
+                            setIsEditModalOpen(true);
+                            setSnippetId(snippet._id);
+                          }}>
                           <Edit className='h-4 w-4' />
                         </Button>
                         <Button
