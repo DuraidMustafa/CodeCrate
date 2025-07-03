@@ -13,6 +13,7 @@ import AdvancedLoading from "@/components/advanced-loading";
 import InfiniteScroll from "react-infinite-scroll-component";
 import InfiniteScrollLoading from "@/components/infinite-scroll-loading";
 import { EditSnippetModel } from "@/components/edit-snippet-model";
+import { useRouter } from "next/navigation";
 
 interface Snippet {
   _id: string;
@@ -38,21 +39,28 @@ const Dashboard = () => {
   const [hasMore, setHasMore] = useState(true);
 
   useEffect(() => {
-    fetchSnippets();
-  }, []);
+    fetchSnippets({ reset: true });
+  }, [isModalOpen, isEditModalOpen]);
 
-  const fetchSnippets = async () => {
+  const fetchSnippets = async ({ reset = false } = {}) => {
+    const currentPage = reset ? 0 : page;
+
     const response = await fetch(
-      `/api/snippets/getAllSnippets?limit=${LIMIT}&skip=${page * LIMIT}`,
+      `/api/snippets/getAllSnippets?limit=${LIMIT}&skip=${currentPage * LIMIT}`,
     );
     const data = await response.json();
-    console.log(data);
 
     if (data.success) {
-      setSnippets((prev) => [...prev, ...data.snippets]);
+      if (reset) {
+        setSnippets(data.snippets);
+        setPage(1); // set to next page
+      } else {
+        setSnippets((prev) => [...prev, ...data.snippets]);
+        setPage((prev) => prev + 1);
+      }
       setHasMore(data.snippets.length === LIMIT);
-      setPage((prev) => prev + 1);
     }
+
     setIsLoading(false);
   };
 
@@ -111,6 +119,7 @@ const Dashboard = () => {
       const data = await response.json();
       if (data.success) {
         toast.success("Snippet deleted successfully");
+        fetchSnippets({ reset: true });
       }
       if (!data.success) {
         toast.error(data.message || "Failed to delete snippet");

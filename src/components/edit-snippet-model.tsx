@@ -191,7 +191,7 @@ export function EditSnippetModel({
       setSelectedTags([...snippetObject.tags]);
     };
     fetchSnippets();
-  }, []);
+  }, [isOpen]);
   function getNewTags(availableTags: string[], selectedTags: string[]) {
     const newTags = [];
     const defaultTags = [];
