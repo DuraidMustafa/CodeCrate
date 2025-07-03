@@ -13,7 +13,7 @@ import AdvancedLoading from "@/components/advanced-loading";
 import InfiniteScroll from "react-infinite-scroll-component";
 import InfiniteScrollLoading from "@/components/infinite-scroll-loading";
 import { EditSnippetModel } from "@/components/edit-snippet-model";
-import { useRouter } from "next/navigation";
+import { useHotkeys } from "react-hotkeys-hook";
 
 interface Snippet {
   _id: string;
@@ -38,7 +38,9 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
-
+  useHotkeys("ctrl+a", () => {
+    setIsModalOpen(true);
+  });
   useEffect(() => {
     fetchSnippets({ reset: true });
   }, [isModalOpen, isEditModalOpen]);
