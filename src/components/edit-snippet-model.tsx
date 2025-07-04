@@ -24,6 +24,7 @@ import { detectLanguage } from "@/lib/language-detector";
 
 interface EditSnippetModalProps {
   isOpen: boolean;
+  availableTags: string[];
   onClose: () => void;
   snippetId: string;
 }
@@ -150,6 +151,7 @@ export function EditSnippetModel({
   isOpen,
   onClose,
   snippetId,
+  availableTags,
 }: EditSnippetModalProps) {
   const [title, setTitle] = useState("");
   const [code, setCode] = useState("");
@@ -157,38 +159,23 @@ export function EditSnippetModel({
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
   const [detectedLanguage, setDetectedLanguage] = useState("");
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
-  useEffect(() => {
-    const fetchTags = async () => {
-      try {
-        const response = await fetch("/api/tags/getTags");
-        const data = await response.json();
-        if (data.success) {
-          const tags = data.tags.map((tag: { name: string }) => tag.name);
-          setAvailableTags(tags);
-          console.log("Available tags fetched successfully:", tags);
-        } else {
-          console.log("Failed to fetch tags:", data.message);
-        }
-      } catch (error) {
-        console.log("Error fetching tags:", error);
-      }
-    };
+  const [visibility, setVisibility] = useState("");
 
-    fetchTags();
-  }, []);
   useEffect(() => {
     const fetchSnippets = async () => {
       const response = await fetch(
         `/api/snippets/getSingleSnippet?snippetId=${snippetId}`,
       );
       const data = await response.json();
-      console.log(data);
-      const snippetObject = data.snippet[0];
-      setTitle(snippetObject.title || "");
-      setCode(snippetObject.code || "");
-      setLanguage(snippetObject.language || "");
-      setSelectedTags([...snippetObject.tags]);
+      let snippetObject;
+      if (data.snippet) {
+        snippetObject = data.snippet;
+        setTitle(snippetObject.title || "");
+        setCode(snippetObject.code || "");
+        setLanguage(snippetObject.language || "");
+        setSelectedTags([...snippetObject.tags]);
+        setVisibility(snippetObject.visibility);
+      }
     };
     fetchSnippets();
   }, [isOpen]);
@@ -323,6 +310,7 @@ export function EditSnippetModel({
           language: finalLanguage,
           defaultTags: selectedTags,
           id: snippetId,
+          visibility,
         }),
       });
       const data = await response.json();
@@ -458,6 +446,30 @@ export function EditSnippetModel({
                 ))}
               </SelectContent>
             </Select>
+            <Label
+              htmlFor='modal-language'
+              className='text-gray-300 mt-4'>
+              Visibility
+            </Label>
+            <Select
+              value={visibility}
+              onValueChange={setVisibility}>
+              <SelectTrigger className='bg-black/30 border-white/20 text-white'>
+                <SelectValue placeholder='Select Visibility...' />
+              </SelectTrigger>
+              <SelectContent className='bg-gray-900 border-white/20 max-h-60'>
+                <SelectItem
+                  value='private'
+                  className='text-white hover:bg-white/10'>
+                  Private
+                </SelectItem>
+                <SelectItem
+                  value='public'
+                  className='text-white hover:bg-white/10'>
+                  Public
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Code Editor */}
@@ -521,19 +533,20 @@ export function EditSnippetModel({
 
             <div className='flex flex-wrap gap-2 mt-3'>
               <span className='text-sm text-gray-400 mr-2'>Suggested:</span>
-              {availableTags
-                .filter((tag) => !selectedTags.includes(tag))
-                .slice(0, 6)
-                .map((tag) => (
-                  <Button
-                    key={tag}
-                    variant='ghost'
-                    size='sm'
-                    onClick={() => addTag(tag)}
-                    className='h-6 px-2 text-xs text-gray-400 hover:text-white hover:bg-white/10'>
-                    {tag}
-                  </Button>
-                ))}
+              {availableTags &&
+                availableTags
+                  .filter((tag) => !selectedTags.includes(tag))
+                  .slice(0, 6)
+                  .map((tag) => (
+                    <Button
+                      key={tag}
+                      variant='ghost'
+                      size='sm'
+                      onClick={() => addTag(tag)}
+                      className='h-6 px-2 text-xs text-gray-400 hover:text-white hover:bg-white/10'>
+                      {tag}
+                    </Button>
+                  ))}
             </div>
           </div>
 

@@ -24,6 +24,7 @@ import { detectLanguage } from "@/lib/language-detector";
 
 interface AddSnippetModalProps {
   isOpen: boolean;
+  availableTags: string[];
   onClose: () => void;
 }
 
@@ -145,33 +146,19 @@ const languages = [
   "Log",
 ];
 
-export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
+export function AddSnippetModal({
+  isOpen,
+  onClose,
+  availableTags,
+}: AddSnippetModalProps) {
   const [title, setTitle] = useState("");
   const [code, setCode] = useState("");
   const [language, setLanguage] = useState("");
   const [selectedTags, setSelectedTags] = useState<string[]>([]);
   const [newTag, setNewTag] = useState("");
   const [detectedLanguage, setDetectedLanguage] = useState("");
-  const [availableTags, setAvailableTags] = useState<string[]>([]);
-  useEffect(() => {
-    const fetchTags = async () => {
-      try {
-        const response = await fetch("/api/tags/getTags");
-        const data = await response.json();
-        if (data.success) {
-          const tags = data.tags.map((tag: { name: string }) => tag.name);
-          setAvailableTags(tags);
-          console.log("Available tags fetched successfully:", tags);
-        } else {
-          console.log("Failed to fetch tags:", data.message);
-        }
-      } catch (error) {
-        console.log("Error fetching tags:", error);
-      }
-    };
+  const [visibility, setVisibility] = useState("private");
 
-    fetchTags();
-  }, []);
   function getNewTags(availableTags: string[], selectedTags: string[]) {
     const newTags = [];
     const defaultTags = [];
@@ -302,6 +289,7 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
           code,
           language: finalLanguage,
           defaultTags: selectedTags,
+          visibility,
         }),
       });
       const data = await response.json();
@@ -437,6 +425,31 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
                 ))}
               </SelectContent>
             </Select>
+
+            <Label
+              htmlFor='modal-language'
+              className='text-gray-300 mt-4'>
+              Visibility
+            </Label>
+            <Select
+              value={visibility}
+              onValueChange={setVisibility}>
+              <SelectTrigger className='bg-black/30 border-white/20 text-white'>
+                <SelectValue placeholder='Select Visibility...' />
+              </SelectTrigger>
+              <SelectContent className='bg-gray-900 border-white/20 max-h-60'>
+                <SelectItem
+                  value='private'
+                  className='text-white hover:bg-white/10'>
+                  Private
+                </SelectItem>
+                <SelectItem
+                  value='public'
+                  className='text-white hover:bg-white/10'>
+                  Public
+                </SelectItem>
+              </SelectContent>
+            </Select>
           </div>
 
           {/* Code Editor */}
@@ -500,19 +513,20 @@ export function AddSnippetModal({ isOpen, onClose }: AddSnippetModalProps) {
 
             <div className='flex flex-wrap gap-2 mt-3'>
               <span className='text-sm text-gray-400 mr-2'>Suggested:</span>
-              {availableTags
-                .filter((tag) => !selectedTags.includes(tag))
-                .slice(0, 6)
-                .map((tag) => (
-                  <Button
-                    key={tag}
-                    variant='ghost'
-                    size='sm'
-                    onClick={() => addTag(tag)}
-                    className='h-6 px-2 text-xs text-gray-400 hover:text-white hover:bg-white/10'>
-                    {tag}
-                  </Button>
-                ))}
+              {availableTags &&
+                availableTags
+                  .filter((tag) => !selectedTags.includes(tag))
+                  .slice(0, 6)
+                  .map((tag) => (
+                    <Button
+                      key={tag}
+                      variant='ghost'
+                      size='sm'
+                      onClick={() => addTag(tag)}
+                      className='h-6 px-2 text-xs text-gray-400 hover:text-white hover:bg-white/10'>
+                      {tag}
+                    </Button>
+                  ))}
             </div>
           </div>
 

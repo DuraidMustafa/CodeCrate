@@ -6,7 +6,7 @@ export async function PATCH(request: NextRequest) {
   try {
     const { userId } = getAuth(request);
     const body = await request.json();
-    const { title, code, language, defaultTags, id } = body;
+    const { title, code, language, defaultTags, id, visibility } = body;
     if (!code) {
       return new Response(
         JSON.stringify({
@@ -42,6 +42,7 @@ export async function PATCH(request: NextRequest) {
         language: language,
         tags: defaultTags,
         userId: userId,
+        visibility,
       },
     );
     return new Response(

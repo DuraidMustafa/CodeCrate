@@ -4,9 +4,9 @@ import { AddSnippetModal } from "@/components/add-snippet-modal";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Copy, Edit, Trash2 } from "lucide-react";
+import { Plus, Copy, Edit, Trash2, ExternalLink } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
 import { oneDark } from "react-syntax-highlighter/dist/esm/styles/prism";
 import AdvancedLoading from "@/components/advanced-loading";
@@ -14,7 +14,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 import InfiniteScrollLoading from "@/components/infinite-scroll-loading";
 import { EditSnippetModel } from "@/components/edit-snippet-model";
 import { useHotkeys } from "react-hotkeys-hook";
-
+import copyToClipboard from "@/functions/copyToClipboard";
 interface Snippet {
   _id: string;
   title: string;
@@ -25,6 +25,7 @@ interface Snippet {
   createdAt: { $date: string };
   updatedAt: { $date: string };
   __v: number;
+  visibility: "public" | "private";
 }
 
 const LIMIT = 6;
@@ -38,6 +39,7 @@ const Dashboard = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [page, setPage] = useState(0);
   const [hasMore, setHasMore] = useState(true);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
   useHotkeys("ctrl+a", () => {
     setIsModalOpen(true);
   });
@@ -45,6 +47,25 @@ const Dashboard = () => {
     fetchSnippets({ reset: true });
   }, [isModalOpen, isEditModalOpen]);
 
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await fetch("/api/tags/getTags");
+        const data = await response.json();
+        if (data.success) {
+          const tags = data.tags.map((tag: { name: string }) => tag.name);
+          setAvailableTags(tags);
+          console.log("Available tags fetched successfully:", tags);
+        } else {
+          console.log("Failed to fetch tags:", data.message);
+        }
+      } catch (error) {
+        console.log("Error fetching tags:", error);
+      }
+    };
+
+    fetchTags();
+  }, []);
   const fetchSnippets = async ({ reset = false } = {}) => {
     const currentPage = reset ? 0 : page;
 
@@ -65,16 +86,6 @@ const Dashboard = () => {
     }
 
     setIsLoading(false);
-  };
-
-  const copyToClipboard = async (code: string) => {
-    try {
-      await navigator.clipboard.writeText(code);
-      toast.success("Code copied to clipboard!");
-    } catch (err) {
-      console.log(err);
-      toast.error("Failed to copy code");
-    }
   };
 
   const filteredSnippets = snippets.filter(
@@ -136,27 +147,16 @@ const Dashboard = () => {
 
   return (
     <section className='container mx-auto px-4 py-8'>
-      <ToastContainer
-        position='bottom-left'
-        autoClose={3000}
-        hideProgressBar
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme='dark'
-      />
-
       <AddSnippetModal
         isOpen={isModalOpen}
+        availableTags={availableTags}
         onClose={() => setIsModalOpen(false)}
       />
       <EditSnippetModel
         isOpen={isEditModalOpen}
         onClose={() => setIsEditModalOpen(false)}
         snippetId={snippetId}
+        availableTags={availableTags}
       />
 
       {snippets.length > 0 ? (
@@ -209,6 +209,7 @@ const Dashboard = () => {
                           </div>
                         ) : null}
                       </div>
+
                       <div className='flex gap-2'>
                         <Button
                           size='sm'
@@ -227,6 +228,17 @@ const Dashboard = () => {
                           }}>
                           <Edit className='h-4 w-4' />
                         </Button>
+                        <a
+                          href={`/dashboard/snippets/${snippet._id}`}
+                          target='_blank'
+                          rel='noopener noreferrer'>
+                          <Button
+                            size='sm'
+                            variant='ghost'
+                            className='h-8 w-8 p-0'>
+                            <ExternalLink className='h-4 w-4' />
+                          </Button>
+                        </a>
                         <Button
                           size='sm'
                           variant='ghost'
@@ -251,6 +263,18 @@ const Dashboard = () => {
                         ))}
                       </div>
                     )}
+                    <div className='flex items-center gap-2 mb-4'>
+                      <span
+                        className={`px-2 py-1 rounded-full text-xs font-medium ${
+                          snippet.visibility === "public"
+                            ? "bg-green-900/30 text-green-300 border border-green-800"
+                            : "bg-gray-700/50 text-gray-300 border border-gray-600"
+                        }`}>
+                        {snippet.visibility === "public"
+                          ? "🌐 Public"
+                          : "🔒 Private"}
+                      </span>
+                    </div>
 
                     {/* Code Block */}
                     <div className='relative'>

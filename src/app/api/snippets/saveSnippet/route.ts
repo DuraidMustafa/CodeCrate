@@ -6,7 +6,8 @@ export async function POST(request: NextRequest) {
   try {
     const { userId } = getAuth(request);
     const body = await request.json();
-    const { title, code, language, defaultTags } = body;
+    const { title, code, language, defaultTags, visibility } = body;
+
     if (!code) {
       return new Response(
         JSON.stringify({
@@ -28,6 +29,7 @@ export async function POST(request: NextRequest) {
       language: language,
       tags: defaultTags,
       userId: userId,
+      visibility,
     });
     return new Response(
       JSON.stringify({

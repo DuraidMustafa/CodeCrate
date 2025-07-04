@@ -22,6 +22,10 @@ const SnippetSchema = new Schema(
       type: String,
       required: true,
     },
+    visibility: {
+      type: String,
+      default: "private",
+    },
   },
   { timestamps: true },
 );
