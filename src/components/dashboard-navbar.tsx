@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Code2, Plus } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
@@ -8,6 +8,26 @@ import { AddSnippetModal } from "./add-snippet-modal";
 
 const DashboardNavbar = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
+  useEffect(() => {
+    const fetchTags = async () => {
+      try {
+        const response = await fetch("/api/tags/getTags");
+        const data = await response.json();
+        if (data.success) {
+          const tags = data.tags.map((tag: { name: string }) => tag.name);
+          setAvailableTags(tags);
+          console.log("Available tags fetched successfully:", tags);
+        } else {
+          console.log("Failed to fetch tags:", data.message);
+        }
+      } catch (error) {
+        console.log("Error fetching tags:", error);
+      }
+    };
+
+    fetchTags();
+  }, []);
   return (
     <header className='top-0 z-50 w-full border-b border-white/10 bg-black/50 backdrop-blur-xl'>
       <div className='container mx-auto flex h-20 items-center justify-between px-6'>
@@ -28,6 +48,7 @@ const DashboardNavbar = () => {
           <div className='flex items-center space-x-4'>
             <AddSnippetModal
               isOpen={isModalOpen}
+              availableTags={availableTags}
               onClose={() => setIsModalOpen(false)}
             />
             <Button
