@@ -308,11 +308,12 @@ const Dashboard = () => {
         </>
       ) : (
         /* Empty State - Add First Snippet */
-        <div className='flex justify-center items-center mt-32'>
+        <div className='flex justify-center items-center mt-96'>
           <Button
-            className='bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 shadow-lg shadow-purple-500/25 h-32 w-96 text-2xl'
+            className='bg-gradient-to-r from-purple-500 to-cyan-500 hover:from-purple-600 hover:to-cyan-600 text-white px-8 py-6 rounded-2xl shadow-xl shadow-purple-400/40 text-xl font-semibold flex items-center justify-center gap-3 transition-all duration-300 hover:scale-105'
             onClick={() => setIsModalOpen(true)}>
-            <Plus className='h-6 w-6 text-white mr-3' /> Add Your First Snippet
+            <Plus className='h-5 w-5 text-white' />
+            Add Your First Snippet
           </Button>
         </div>
       )}
