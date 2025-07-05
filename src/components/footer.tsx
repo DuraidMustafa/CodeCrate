@@ -22,7 +22,7 @@ export function Footer() {
             </Link>
             <p className='text-gray-400 max-w-md mb-6 leading-relaxed'>
               Personal code snippet manager for solo developers. Save, search,
-              and organize your code snippets with tags, folders, and instant
+              and organize your code snippets with tags, and instant
               recall.
             </p>
           </div>

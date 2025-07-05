@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Sparkles, Search, Tag, Folder } from "lucide-react";
+import { ArrowRight, Sparkles, Search, Tag } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 
@@ -36,9 +36,8 @@ export function HeroSection() {
           </h1>
 
           <p className='mx-auto mb-12 max-w-3xl text-xl text-gray-300 sm:text-2xl leading-relaxed'>
-            Your clean, personal snippet vault with tags, folders, and instant
-            recall. Built for solo developers who want their code organized
-            beautifully.
+            Your clean, personal snippet vault with tags and instant recall.
+            Built for solo developers who want their code organized beautifully.
           </p>
 
           <div className='flex flex-col sm:flex-row gap-6 justify-center items-center mb-16'>
@@ -59,7 +58,7 @@ export function HeroSection() {
           </div>
 
           {/* Feature preview cards */}
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-6 max-w-4xl mx-auto'>
             {[
               {
                 icon: Search,
@@ -70,11 +69,6 @@ export function HeroSection() {
                 icon: Tag,
                 title: "Smart Tagging",
                 desc: "Organize across projects with tags",
-              },
-              {
-                icon: Folder,
-                title: "Clean Folders",
-                desc: "Personal vault structure that works",
               },
             ].map((feature, index) => (
               <div
