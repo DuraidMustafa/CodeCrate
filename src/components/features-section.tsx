@@ -1,6 +1,6 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Search, Tag, Folder, Code2, Zap, User } from "lucide-react";
+import { Search, Tag, Code2, Zap, User } from "lucide-react";
 
 const features = [
   {
@@ -11,14 +11,7 @@ const features = [
     gradient: "from-purple-500 to-pink-500",
     badge: "Core",
   },
-  {
-    icon: Folder,
-    title: "Clean Folder Structure",
-    description:
-      "Organize your snippets in folders that make sense to you. Create your personal vault structure.",
-    gradient: "from-cyan-500 to-blue-500",
-    badge: "Organize",
-  },
+
   {
     icon: Zap,
     title: "Instant Recall",
@@ -75,7 +68,7 @@ export function FeaturesSection() {
           </p>
         </div>
 
-        <div className='grid gap-8 md:grid-cols-2 lg:grid-cols-3 max-w-7xl mx-auto'>
+        <div className='grid gap-8 md:grid-cols-2 lg:grid-cols-1 max-w-7xl mx-auto'>
           {features.map((feature, index) => (
             <Card
               key={index}
