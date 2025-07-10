@@ -2,7 +2,7 @@
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import { Code2, FileDown, Plus, Menu, X } from "lucide-react";
+import { Code2, Plus, Menu, X, FileUp } from "lucide-react";
 import { UserButton } from "@clerk/nextjs";
 import { AddSnippetModal } from "./add-snippet-modal";
 
@@ -83,7 +83,7 @@ const DashboardNavbar = () => {
           <Button
             className='bg-gradient-to-r from-purple-600 to-cyan-600 hover:from-purple-700 hover:to-cyan-700 text-white border-0 shadow-lg shadow-purple-500/25'
             onClick={downloadSnippets}>
-            <FileDown /> Export Snippets
+            <FileUp /> Export Snippets
           </Button>
           <UserButton />
         </div>
@@ -110,7 +110,7 @@ const DashboardNavbar = () => {
             onClick={() => {
               setIsMenuOpen(false);
             }}>
-            <FileDown className='h-5 w-5 mr-2' /> Export Snippets
+            <FileUp className='h-5 w-5 mr-2' /> Export Snippets
           </Button>
           <div className='self-start'>
             <UserButton />

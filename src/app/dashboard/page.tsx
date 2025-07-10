@@ -15,6 +15,7 @@ import InfiniteScrollLoading from "@/components/infinite-scroll-loading";
 import { EditSnippetModel } from "@/components/edit-snippet-model";
 import { useHotkeys } from "react-hotkeys-hook";
 import copyToClipboard from "@/functions/copyToClipboard";
+import CustomFileInput from "@/components/custom-file-input";
 interface Snippet {
   _id: string;
   title: string;
@@ -179,6 +180,7 @@ const Dashboard = () => {
               onClick={() => setIsModalOpen(true)}>
               <Plus className='h-4 w-4 mr-2' /> Add New Snippet
             </Button>
+            <CustomFileInput fetchSnippets={fetchSnippets} />
           </div>
 
           {/* Snippets Grid with Infinite Scroll */}
