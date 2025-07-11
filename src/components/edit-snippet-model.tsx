@@ -219,8 +219,6 @@ export function EditSnippetModel({
         const isNewTag = tags.newTags.includes(tag);
 
         if (!isNewTag) {
-          console.log("Tag already exists:", tag);
-
           return;
         }
         const response = await fetch("/api/tags/saveTags", {
@@ -234,7 +232,6 @@ export function EditSnippetModel({
         });
         const data = await response.json();
         if (data.success) {
-          console.log("Tag saved successfully:", data);
           toast.success(data.message, {
             position: "bottom-left",
             autoClose: 3000,
@@ -247,7 +244,6 @@ export function EditSnippetModel({
           });
         }
         if (!data.success) {
-          console.log("Failed to save tag:", data.message);
           toast.error(data.message, {
             position: "bottom-left",
             autoClose: 3000,
@@ -291,12 +287,6 @@ export function EditSnippetModel({
 
   const handleUpdate = async () => {
     const finalLanguage = language || "";
-    console.log({
-      title,
-      code,
-      language: finalLanguage,
-      tags: selectedTags,
-    });
 
     try {
       const response = await fetch(`/api/snippets/updateSnippet`, {
@@ -315,7 +305,6 @@ export function EditSnippetModel({
       });
       const data = await response.json();
       if (!data.success) {
-        console.log("Failed to update snippet:", data.message);
         toast.error(data.message, {
           position: "bottom-left",
           autoClose: 3000,
@@ -328,7 +317,7 @@ export function EditSnippetModel({
         });
         return;
       }
-      console.log("Snippet updated successfully:", data);
+
       toast.success(data.message, {
         position: "bottom-left",
         autoClose: 3000,

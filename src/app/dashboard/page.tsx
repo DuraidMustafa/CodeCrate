@@ -56,9 +56,6 @@ const Dashboard = () => {
         if (data.success) {
           const tags = data.tags.map((tag: { name: string }) => tag.name);
           setAvailableTags(tags);
-          console.log("Available tags fetched successfully:", tags);
-        } else {
-          console.log("Failed to fetch tags:", data.message);
         }
       } catch (error) {
         console.log("Error fetching tags:", error);

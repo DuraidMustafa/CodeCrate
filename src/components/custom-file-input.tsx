@@ -28,7 +28,7 @@ export default function CustomFileInput({
       try {
         const jsonString = event.target?.result as string;
         const parsedData = JSON.parse(jsonString);
-        console.log("Parsed JSON:", parsedData);
+     
 
         await sendToBackend(parsedData);
       } catch (error) {

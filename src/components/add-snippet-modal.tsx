@@ -199,8 +199,6 @@ export function AddSnippetModal({
         const isNewTag = tags.newTags.includes(tag);
 
         if (!isNewTag) {
-          console.log("Tag already exists:", tag);
-
           return;
         }
         const response = await fetch("/api/tags/saveTags", {
@@ -214,7 +212,6 @@ export function AddSnippetModal({
         });
         const data = await response.json();
         if (data.success) {
-          console.log("Tag saved successfully:", data);
           toast.success(data.message, {
             position: "bottom-left",
             autoClose: 3000,
@@ -227,7 +224,6 @@ export function AddSnippetModal({
           });
         }
         if (!data.success) {
-          console.log("Failed to save tag:", data.message);
           toast.error(data.message, {
             position: "bottom-left",
             autoClose: 3000,
@@ -271,12 +267,6 @@ export function AddSnippetModal({
 
   const handleSave = async () => {
     const finalLanguage = language || "";
-    console.log({
-      title,
-      code,
-      language: finalLanguage,
-      tags: selectedTags,
-    });
 
     try {
       const response = await fetch(`/api/snippets/saveSnippet`, {
@@ -294,7 +284,6 @@ export function AddSnippetModal({
       });
       const data = await response.json();
       if (!data.success) {
-        console.log("Failed to save snippet:", data.message);
         toast.error(data.message, {
           position: "bottom-left",
           autoClose: 3000,
@@ -307,7 +296,7 @@ export function AddSnippetModal({
         });
         return;
       }
-      console.log("Snippet saved successfully:", data);
+
       toast.success(data.message, {
         position: "bottom-left",
         autoClose: 3000,
