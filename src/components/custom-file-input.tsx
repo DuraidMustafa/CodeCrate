@@ -10,7 +10,7 @@ export default function CustomFileInput({
   fetchSnippets: ({ reset }: { reset: boolean }) => void;
 }) {
   const fileInputRef = useRef<HTMLInputElement | null>(null);
-  const [fileName, setFileName] = useState("Upload");
+  const [fileName, setFileName] = useState("Import Snippets");
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -28,7 +28,6 @@ export default function CustomFileInput({
       try {
         const jsonString = event.target?.result as string;
         const parsedData = JSON.parse(jsonString);
-     
 
         await sendToBackend(parsedData);
       } catch (error) {
@@ -56,7 +55,7 @@ export default function CustomFileInput({
     } catch (err) {
       console.error("Failed to upload:", err);
     } finally {
-      setFileName("Upload");
+      setFileName("Import Snippets");
     }
   };
 
