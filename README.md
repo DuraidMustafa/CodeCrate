@@ -64,37 +64,6 @@ pnpm run dev
 Once the server is running, open your browser and go to:  
 [http://localhost:3000](http://localhost:3000)
 
-## 🤝 Contributing
-
-Contributions, suggestions, and improvements are welcome!
-
-To contribute:
-
-1. **Fork** the repository
-2. **Create a branch**
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-3. **Commit your changes**
-   ```bash
-   git commit -m "Add new feature"
-   ```
-4. **Push to your fork**
-   ```bash
-   git push origin feature/your-feature-name
-   ```
-5. **Create a Pull Request**
-
-> ✅ Please follow the existing code style and include meaningful commit messages.
-
----
-
-## 📄 License
-
-Licensed under the **MIT License**.
-
----
-
 ## 👤 Author
 
 **Duraid Mustafa**  
