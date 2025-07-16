@@ -27,6 +27,7 @@ interface Snippet {
   updatedAt: { $date: string };
   __v: number;
   visibility: "public" | "private";
+  shortcut: string;
 }
 
 const LIMIT = 6;
@@ -198,12 +199,22 @@ const Dashboard = () => {
                         <CardTitle className='text-xl font-bold text-gray-800 dark:text-gray-100'>
                           {snippet.title}
                         </CardTitle>
+
                         {snippet.language ? (
                           <div className='flex items-center gap-2 mt-2'>
                             <Badge
                               variant='secondary'
                               className='text-xs'>
                               Language : {snippet.language}
+                            </Badge>
+                          </div>
+                        ) : null}
+                        {snippet.shortcut ? (
+                          <div className='flex items-center gap-2 mt-2'>
+                            <Badge
+                              variant='secondary'
+                              className='text-xs'>
+                              Shortcut : {snippet.shortcut}
                             </Badge>
                           </div>
                         ) : null}

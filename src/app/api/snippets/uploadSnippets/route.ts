@@ -13,7 +13,8 @@ export async function POST(request: NextRequest) {
         if (
           typeof item.title !== "string" ||
           typeof item.language !== "string" ||
-          typeof item.code !== "string"
+          typeof item.code !== "string" ||
+          typeof item.shortcut !== "string"
         ) {
           return null;
         }
@@ -26,6 +27,7 @@ export async function POST(request: NextRequest) {
           visibility:
             typeof item.visibility === "string" ? item.visibility : "private",
           userId,
+          shortcut: item.shortcut,
         };
       })
       .filter(Boolean);

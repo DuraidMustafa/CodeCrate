@@ -158,6 +158,7 @@ export function AddSnippetModal({
   const [newTag, setNewTag] = useState("");
   const [detectedLanguage, setDetectedLanguage] = useState("");
   const [visibility, setVisibility] = useState("private");
+  const [shortcut, setShortcut] = useState("");
 
   function getNewTags(availableTags: string[], selectedTags: string[]) {
     const newTags = [];
@@ -280,6 +281,7 @@ export function AddSnippetModal({
           language: finalLanguage,
           defaultTags: selectedTags,
           visibility,
+          shortcut,
         }),
       });
       const data = await response.json();
@@ -328,7 +330,8 @@ export function AddSnippetModal({
     setSelectedTags([]);
     setNewTag("");
     setDetectedLanguage("");
-
+    setVisibility("private");
+    setShortcut("");
     onClose();
   };
 
@@ -340,6 +343,8 @@ export function AddSnippetModal({
     setNewTag("");
     setDetectedLanguage("");
     onClose();
+    setVisibility("private");
+    setShortcut("");
   };
 
   return (
@@ -367,6 +372,20 @@ export function AddSnippetModal({
               placeholder='Enter snippet title...'
               value={title}
               onChange={(e) => setTitle(e.target.value)}
+              className='bg-black/30 border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500/50'
+            />
+          </div>
+          <div className='space-y-2'>
+            <Label
+              htmlFor='modal-shortcut'
+              className='text-gray-300'>
+              VS Code Shortcut <span className='text-gray-500'>(optional)</span>
+            </Label>
+            <Input
+              id='modal-shortcut'
+              placeholder='Enter Shortcut'
+              value={shortcut}
+              onChange={(e) => setShortcut(e.target.value)}
               className='bg-black/30 border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500/50'
             />
           </div>

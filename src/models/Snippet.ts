@@ -26,6 +26,10 @@ const SnippetSchema = new Schema(
       type: String,
       default: "private",
     },
+    shortcut: {
+      type: String,
+      required: false,
+    },
   },
   { timestamps: true },
 );
