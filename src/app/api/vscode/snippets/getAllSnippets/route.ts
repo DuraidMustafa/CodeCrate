@@ -23,7 +23,6 @@ export async function GET(request: NextRequest) {
         },
       );
     }
-    console.log(userId);
     dbConnect();
     const snippets = await Snippet.find({ userId });
     return new Response(
