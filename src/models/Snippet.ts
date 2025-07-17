@@ -4,7 +4,7 @@ const SnippetSchema = new Schema(
   {
     title: {
       type: String,
-      required: false,
+      default: "",
     },
     code: {
       type: String,
@@ -16,7 +16,7 @@ const SnippetSchema = new Schema(
     },
     tags: {
       type: [String],
-      required: false,
+      default: [],
     },
     userId: {
       type: String,

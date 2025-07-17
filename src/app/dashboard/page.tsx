@@ -87,13 +87,12 @@ const Dashboard = () => {
     setIsLoading(false);
   };
 
-  const filteredSnippets = snippets.filter(
-    (snippet) =>
-      snippet.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      snippet.tags.some((tag) =>
-        tag.toLowerCase().includes(searchTerm.toLowerCase()),
-      ) ||
-      snippet.language.toLowerCase().includes(searchTerm.toLowerCase()),
+  const filteredSnippets = snippets.filter((snippet) =>
+    snippet.title
+      ? snippet.title.toLowerCase().includes(searchTerm.toLowerCase())
+      : snippet.tags.some((tag) =>
+          tag.toLowerCase().includes(searchTerm.toLowerCase()),
+        ) || snippet.language.toLowerCase().includes(searchTerm.toLowerCase()),
   );
 
   const getLanguageForHighlighter = (language: string) => {
