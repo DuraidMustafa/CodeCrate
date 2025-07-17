@@ -17,8 +17,8 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Code, Save, Tag, X, Wand2 } from "lucide-react";
-import { useState, useEffect } from "react";
+import { Code, Save, Tag, X, Wand2, Search } from "lucide-react";
+import { useState, useEffect, useMemo } from "react";
 import { CodeEditor } from "@/components/code-editor";
 import { detectLanguage } from "@/lib/language-detector";
 
@@ -144,6 +144,7 @@ const languages = [
   "RegEx",
   "Diff",
   "Log",
+  "Other",
 ];
 
 export function AddSnippetModal({
@@ -159,6 +160,16 @@ export function AddSnippetModal({
   const [detectedLanguage, setDetectedLanguage] = useState("");
   const [visibility, setVisibility] = useState("private");
   const [shortcut, setShortcut] = useState("");
+  const [languageSearch, setLanguageSearch] = useState("");
+  const [isLanguageDropdownOpen, setIsLanguageDropdownOpen] = useState(false);
+
+  // Filter languages based on search
+  const filteredLanguages = useMemo(() => {
+    if (!languageSearch) return languages;
+    return languages.filter((lang) =>
+      lang.toLowerCase().includes(languageSearch.toLowerCase()),
+    );
+  }, [languageSearch]);
 
   function getNewTags(availableTags: string[], selectedTags: string[]) {
     const newTags = [];
@@ -177,6 +188,7 @@ export function AddSnippetModal({
       defaultTags,
     };
   }
+
   // Auto-detect language when code changes
   useEffect(() => {
     if (code.trim() && !language) {
@@ -266,6 +278,12 @@ export function AddSnippetModal({
     }
   };
 
+  const handleLanguageSelect = (selectedLanguage: string) => {
+    setLanguage(selectedLanguage);
+    setLanguageSearch("");
+    setIsLanguageDropdownOpen(false);
+  };
+
   const handleSave = async () => {
     const finalLanguage = language || "";
 
@@ -332,6 +350,7 @@ export function AddSnippetModal({
     setDetectedLanguage("");
     setVisibility("private");
     setShortcut("");
+    setLanguageSearch("");
     onClose();
   };
 
@@ -342,10 +361,25 @@ export function AddSnippetModal({
     setSelectedTags([]);
     setNewTag("");
     setDetectedLanguage("");
+    setLanguageSearch("");
     onClose();
     setVisibility("private");
     setShortcut("");
   };
+
+  // Add this useEffect after the existing useEffect
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Element;
+      if (isLanguageDropdownOpen && !target.closest(".language-selector")) {
+        setIsLanguageDropdownOpen(false);
+        setLanguageSearch("");
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isLanguageDropdownOpen]);
 
   return (
     <Dialog
@@ -416,23 +450,62 @@ export function AddSnippetModal({
                 </div>
               )}
             </div>
-            <Select
-              value={language}
-              onValueChange={setLanguage}>
-              <SelectTrigger className='bg-black/30 border-white/20 text-white'>
-                <SelectValue placeholder='Select language...' />
-              </SelectTrigger>
-              <SelectContent className='bg-gray-900 border-white/20 max-h-60'>
-                {languages.map((lang) => (
-                  <SelectItem
-                    key={lang}
-                    value={lang}
-                    className='text-white hover:bg-white/10'>
-                    {lang}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+
+            <div className='relative language-selector'>
+              {/* Search Input */}
+              <div className='relative'>
+                <Search className='absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 z-10' />
+                <Input
+                  placeholder='Search or select language...'
+                  value={languageSearch || language}
+                  onChange={(e) => {
+                    setLanguageSearch(e.target.value);
+                    setIsLanguageDropdownOpen(true);
+                    if (e.target.value === "") {
+                      setLanguage("");
+                    }
+                  }}
+                  onFocus={() => setIsLanguageDropdownOpen(true)}
+                  className='pl-10 bg-black/30 border-white/20 text-white placeholder:text-gray-400 focus:border-purple-500/50'
+                />
+              </div>
+
+              {/* Dropdown */}
+              {isLanguageDropdownOpen && (
+                <div className='absolute top-full left-0 right-0 z-50 mt-1 bg-gray-900 border border-white/20 rounded-md shadow-lg max-h-60 overflow-hidden'>
+                  <div className='max-h-60 overflow-y-auto'>
+                    {filteredLanguages.length > 0 ? (
+                      filteredLanguages.map((lang) => (
+                        <button
+                          key={lang}
+                          type='button'
+                          className='w-full text-left px-3 py-2 text-white hover:bg-white/10 focus:bg-white/10 focus:outline-none transition-colors'
+                          onClick={() => handleLanguageSelect(lang)}
+                          onMouseDown={(e) => e.preventDefault()} // Prevent input blur
+                        >
+                          {lang}
+                        </button>
+                      ))
+                    ) : (
+                      <div className='px-3 py-2 text-gray-400 text-sm'>
+                        No languages found
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Overlay to close dropdown when clicking outside */}
+              {isLanguageDropdownOpen && (
+                <div
+                  className='fixed inset-0 z-40'
+                  onClick={() => {
+                    setIsLanguageDropdownOpen(false);
+                    setLanguageSearch("");
+                  }}
+                />
+              )}
+            </div>
 
             <Label
               htmlFor='modal-language'
