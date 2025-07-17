@@ -1,45 +1,40 @@
-import { getAuth } from "@clerk/nextjs/server";
+import dbConnect from "@/lib/dbConnect";
+import { Snippet } from "@/models/Snippet";
+import { verifyToken } from "@clerk/backend";
 import { NextRequest } from "next/server";
-import dbConnect from "../../../../lib/dbConnect";
-import { Snippet } from "../../../../models/Snippet";
+
 export async function POST(request: NextRequest) {
   try {
-    const { userId } = getAuth(request);
-    const body = await request.json();
-    const { title, code, language, defaultTags, visibility, shortcut } = body;
-
-    if (!code) {
+    const authHeader = request.headers.get("Authorization") || "";
+    const token = authHeader.replace("Bearer ", "");
+    const payload = await verifyToken(token, {
+      secretKey: process.env.CLERK_SECRET_KEY!,
+    });
+    const userId = payload.sub;
+    if (!userId) {
       return new Response(
         JSON.stringify({
-          message: "Please provide your snippet",
           success: false,
+          message: "Unauthorized",
         }),
         {
-          status: 400,
+          status: 401,
           headers: { "Content-Type": "application/json" },
         },
       );
     }
-
+    const body = await request.json();
+    const { code, language, shortcut } = body;
     dbConnect();
-
-    const newSnippet = await Snippet.create({
-      title: title,
-      code: code,
-      language: language,
-      tags: defaultTags,
-      userId: userId,
-      visibility,
-      shortcut,
-    });
+    const snippet = await Snippet.create({ userId, code, language, shortcut });
     return new Response(
       JSON.stringify({
         success: true,
         message: "Snippet saved successfully",
-        newSnippet,
+        snippet,
       }),
       {
-        status: 201,
+        status: 200,
         headers: { "Content-Type": "application/json" },
       },
     );
@@ -50,6 +45,7 @@ export async function POST(request: NextRequest) {
       JSON.stringify({
         success: false,
         message: "Server Error Occurred",
+        error,
       }),
       {
         status: 500,

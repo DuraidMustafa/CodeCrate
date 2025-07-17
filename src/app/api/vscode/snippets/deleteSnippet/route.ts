@@ -1,25 +1,30 @@
-import { getAuth } from "@clerk/nextjs/server";
+import dbConnect from "@/lib/dbConnect";
+import { Snippet } from "@/models/Snippet";
+import { verifyToken } from "@clerk/backend";
 import { NextRequest } from "next/server";
-import dbConnect from "../../../../lib/dbConnect";
-import { Snippet } from "../../../../models/Snippet";
-export async function PATCH(request: NextRequest) {
+
+export async function DELETE(request: NextRequest) {
   try {
-    const { userId } = getAuth(request);
-    const body = await request.json();
-    const { title, code, language, defaultTags, id, visibility, shortcut } =
-      body;
-    if (!code) {
+    const authHeader = request.headers.get("Authorization") || "";
+    const token = authHeader.replace("Bearer ", "");
+    const payload = await verifyToken(token, {
+      secretKey: process.env.CLERK_SECRET_KEY!,
+    });
+    const userId = payload.sub;
+    if (!userId) {
       return new Response(
         JSON.stringify({
-          message: "Please provide your snippet",
           success: false,
+          message: "Unauthorized",
         }),
         {
-          status: 400,
+          status: 401,
           headers: { "Content-Type": "application/json" },
         },
       );
     }
+    const body = await request.json();
+    const { id } = body;
     if (!id) {
       return new Response(
         JSON.stringify({
@@ -32,26 +37,15 @@ export async function PATCH(request: NextRequest) {
         },
       );
     }
-
     dbConnect();
-
-    const newSnippet = await Snippet.findOneAndUpdate(
-      { _id: id },
-      {
-        title: title,
-        code: code,
-        language: language,
-        tags: defaultTags,
-        userId: userId,
-        visibility,
-        shortcut,
-      },
-    );
+    await Snippet.findOneAndDelete({
+      _id: id,
+      userId,
+    });
     return new Response(
       JSON.stringify({
         success: true,
-        message: "Snippet updated successfully",
-        newSnippet,
+        message: "Snippet deleted successfully",
       }),
       {
         status: 200,
@@ -65,6 +59,7 @@ export async function PATCH(request: NextRequest) {
       JSON.stringify({
         success: false,
         message: "Server Error Occurred",
+        error,
       }),
       {
         status: 500,
