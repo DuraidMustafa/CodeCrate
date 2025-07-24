@@ -70,3 +70,7 @@ Once the server is running, open your browser and go to:
 [GitHub](https://github.com/Programmer551) • [Twitter](https://x.com/DuraidMustafa_)
 
 > CodeCrate will keep improving — this is just the beginning.
+
+## Note:
+
+> UI generated using Tailwind UI / AI tools to save time and focus on backend systems.

@@ -22,12 +22,14 @@ export function Footer() {
             </Link>
             <p className='text-gray-400 max-w-md mb-6 leading-relaxed'>
               Personal code snippet manager for solo developers. Save, search,
-              and organize your code snippets with tags, and instant
-              recall.
+              and organize your code snippets with tags, and instant recall.
             </p>
           </div>
         </div>
-
+        <div className='text-gray-400 max-w-md mb-6 leading-relaxed'>
+          UI generated using Tailwind UI / AI tools to save time and focus on
+          backend systems.
+        </div>
         <div className='mt-16 pt-8 border-t border-white/10 flex flex-col sm:flex-row justify-between items-center'>
           <p className='text-gray-400 text-sm flex items-center'>
             © {new Date().getFullYear()} CodeCrate. Built with{" "}
